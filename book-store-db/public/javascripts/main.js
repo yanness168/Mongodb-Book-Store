@@ -12,7 +12,7 @@ $(document).ready(function() {
                 window.location.replace("http://localhost:8000");
             },
             error: function(err){
-                $( "p" ).append( "Request failed..." );
+                $( "p" ).append( "Cannot redirect...But deleted successfully" );
             }
         })
     })

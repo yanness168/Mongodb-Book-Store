@@ -3,13 +3,12 @@ const bookRouter = express.Router();
 var {check, validationResult} = require('express-validator');
 
 const Book = require('../models/book_scheme');
+const genres = ["fantasy","adventure","sci-fi","horror","Self-help","Mystery","Detective","Biography"];
 
 bookRouter.route('/add')
     .get(function (req, res) {
         res.render("add_book",{
-            "genres": ["fantasy","adventure","sci-fi",
-                        "horror","Self-help","Mystery",
-                        "Detective","Biography"],
+            genres: genres,
             title: "Add Book",
         });
     })
@@ -17,7 +16,7 @@ bookRouter.route('/add')
         await check('title','Need a Title!').notEmpty().run(req);
         await check('author','Need an Autor!').notEmpty().run(req);
         await check('pages','Need a Page Number!').notEmpty().run(req);
-        await check('genre','Need a Genre!').notEmpty().run(req);
+        await check('genres','Need a Genre!').notEmpty().run(req);
         await check('rating','Need a Rating!').notEmpty().run(req);
 
         const errors = validationResult(req);
@@ -46,9 +45,7 @@ bookRouter.route('/add')
         }else{
             res.render('add_book',{
                 errors: errors.array(),
-                "genres": ["fantasy","adventure","sci-fi",
-                        "horror","Self-help","Mystery",
-                        "Detective","Biography"],
+                genres: genres,
                 title: "Add Book",
             })
         }
@@ -58,9 +55,7 @@ bookRouter.route('/single/edit/:id')
     .get(function(req,res){
         Book.findById(req.params.id, function(err,book){
             res.render('edit_book', {book,
-            "genres": ["fantasy","adventure","sci-fi",
-                        "horror","Self-help","Mystery",
-                        "Detective","Biography"],
+                genres: genres,
                         title: "Edit "+ book.title,
                     })
         })
