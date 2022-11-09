@@ -1,0 +1,29 @@
+extends layout
+
+block content 
+    h1 Add Book 
+    //"#" -- id; "." -- class
+    form(method="POST",action="/books/add")
+       lable Title: 
+       input(name='title', type='text')
+       br
+       br
+       lable Author: 
+       input(name='author', type='text')
+       br
+       br
+       lable Pages: 
+       input(name='pages', type='text')
+       br
+       br
+       lable Genres: 
+       for genre in genres
+            input(name='genres',type='checkbox',value=genre)
+            label=genre
+       br
+       br
+       lable Rating: 
+       input(name='rating', type='number')
+       br
+       br
+       input(type="submit",value="submit")
