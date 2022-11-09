@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  h1 #{book.title}
+  h5 Written By #{book.author}
+  p Rating: #{book.rating}
+  p Pages: #{book.pages}
+  p Genres:
+  ul 
+    each genre in book.genres 
+      li #{genre}
+      br
+
+  //A horizontal ruler
+  hr
+  a.btn.btn-default(href='/books/single/edit/'+ book._id) Edit Book
+  br
+  br
+  button.btn.delete-book(href='#', data-id=book._id, type='button') Delete Book
+  p(style='color: red')

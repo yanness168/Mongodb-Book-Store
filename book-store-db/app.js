@@ -8,6 +8,7 @@ var app = express();
 
 //Make connection to mongodb
 var mongoose = require("mongoose");
+
 mongoose.connect("mongodb://localhost/Bookstore");
 var db = mongoose.connection;
 db

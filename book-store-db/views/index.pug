@@ -4,7 +4,7 @@ block content
   h1 Bookstore
   each book in books
     lable Title:
-    a(href="/book/"+book.id) #{book.title}
+    a(href="/books/single/"+book.id) #{book.title}
     p Author: #{book.author}
     p Pages: #{book.pages}
     p Rating: #{book.rating}

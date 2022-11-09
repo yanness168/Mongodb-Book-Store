@@ -1,0 +1,26 @@
+extends layout
+
+block content 
+    h1 
+        |Modify 
+        i #{book.title}
+    form(method='POST',action='/books/single/edit/'+book.id)
+       lable Author: 
+       input(name='author', type='text')
+       br
+       br
+       lable Pages: 
+       input(name='pages', type='text')
+       br
+       br
+       lable Genres: 
+        for genre in genres
+                input(name='genres',type='checkbox',value=genre)
+                label=genre
+       br
+       br
+       lable Rating: 
+       input(name='rating', type='text')
+       br
+       br
+       input(type="submit",value="Modify")
