@@ -95,7 +95,7 @@ bookRouter.route('/single/:id')
             if(error){
                 console.log("Delete book failed")
             }else{
-                res.redirect("/")
+                res.send("Success!");
             }
         })
     })

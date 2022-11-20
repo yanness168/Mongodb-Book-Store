@@ -1,38 +1,63 @@
-var createError = require('http-errors');
+const PORT = 8080;
 var express = require('express');
 var path = require('path');
-const PORT = 8000;
+var mongoose = require('mongoose');
+var passport = require('passport');
+var session = require('express-session');
+var config = require('./config/database')
 const book_router = require('./routes/book_route');
+const user_router = require('./routes/user_route');
+
+mongoose.connect(config.database);
+var db = mongoose.connection;
+
+db.once('open', function(){
+  console.log('Connected to mongodb');
+}).on('error', function(err){
+  console.log('Error connecting to mongodb');
+})
 
 var app = express();
 
-//Make connection to mongodb
-var mongoose = require("mongoose");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect("mongodb://localhost/Bookstore");
-var db = mongoose.connection;
-db
-  .once("open", function(){
-    console.log("Connected to MongoDB");
-  })
-  .on('error', function(err){
-    console.log(err);
-  })
+//Session id saved in cookie on the client and data saved on server
+app.use(session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {},
+}));
 
+require("./config/passport")(passport)
+//The initialize() method initializes the authentication module across our app.
+app.use(passport.initialize());
+//The session() middleware alters the request object and is able to attach a ‘user’ value that can be retrieved from the session id.
+app.use(passport.session());
 //Import Book mongoose schema (model):
+
 var Book = require('./models/book_scheme');
 
 // Pug view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-//app.use(........)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+// Wildcard route to allow user to be
+// used in templates
+app.get("*", function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+})
+
+
+//Use routers"
+app.use("/books",book_router);
+app.use("/user", user_router);
 
 //All book information
-app.get('/', function(req,res){
+app.use('/', function(req,res){
   Book.find({},function(err,books){
     if(err){
       console.log("error!")
@@ -44,10 +69,6 @@ app.get('/', function(req,res){
     }
   })
 });
-
-//Use "book_router"
-app.use("/books",book_router);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
