@@ -18,6 +18,10 @@ const bookSchema = new Schema({
     min: 0,
     required: [true,"Need a page number!"]
   },
+  ISBN:{
+    type: String,
+    required:[true]
+  },
   genres:{
     type: [String],
     required: [true, "Need a genre!"]

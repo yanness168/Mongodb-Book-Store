@@ -1,5 +1,6 @@
 const express = require('express');
 const bookRouter = express.Router();
+const fetch = require('node-fetch');
 var {check, validationResult} = require('express-validator');
 
 const Book = require('../models/book_scheme');
@@ -15,6 +16,7 @@ bookRouter.route('/add')
     .post(async function (req, res) {
         await check('title','Need a Title!').notEmpty().run(req);
         await check('author','Need an Autor!').notEmpty().run(req);
+        await check('isbn','Need ISBN-13!').notEmpty().run(req);
         await check('pages','Need a Page Number!').notEmpty().run(req);
         await check('genres','Need a Genre!').notEmpty().run(req);
         await check('rating','Need a Rating!').notEmpty().run(req);
@@ -28,6 +30,7 @@ bookRouter.route('/add')
             //Save book propertities according to the response of the form submitted
             book.title = req.body.title;
             book.author = req.body.author;
+            book.ISBN = req.body.isbn;
             book.pages = req.body.pages;
             book.genres = req.body.genres;
             book.rating = req.body.rating;
@@ -66,6 +69,7 @@ bookRouter.route('/single/edit/:id')
     
          //Save book propertities according to the response of the form submitted
          updates.author = req.body.author;
+         updates.ISBN = req.body.isbn;
          updates.pages = req.body.pages;
          updates.genres = req.body.genres;
          updates.rating = req.body.rating;
@@ -82,10 +86,31 @@ bookRouter.route('/single/edit/:id')
          })
     })
 
+
+var description, publisher, publishedDate;
 bookRouter.route('/single/:id')
     .get(function(req,res){
         Book.findById(req.params.id, function (err,book){
-            res.render('requiredBook',{book, title: book.title})
+            if (err) {
+                res.send("there is something wrong with the book")
+            } else {
+                var api="https://www.googleapis.com/books/v1/volumes?q="+ book.ISBN+"+isbn&maxResults=1"
+        
+                fetch(api)
+                    .then(res=>{
+                        return res.json()
+                    })
+                    .then(json=>{
+                        description = json.items[0].volumeInfo.description.toString();
+                        publisher = json.items[0].volumeInfo.publisher.toString();
+                        publishedDate = json.items[0].volumeInfo.publishedDate;
+                        res.render('requiredBook', {title:book.title, book:book, description:description, publisher:publisher, publishedDate:publishedDate})
+                    })
+                    .catch(err=>{
+                        console.log(err.message);
+                    })
+                
+            }
         })
     })
     .delete(function(req,res){

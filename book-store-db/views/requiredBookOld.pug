@@ -2,10 +2,15 @@ extends layout
 
 block content
   h1 #{book.title}
-  h4 Written By #{book.author}
-  p Description: #{description}
-  p Publisher: #{publisher} 
-  p Published Date: #{publishedDate}
+  h5 Written By #{book.author}
+  p ISBN-13:  #{book.ISBN}
+  p Rating:  #{book.rating}
+  p Pages:  #{book.pages}
+  p Genres:
+  ul 
+    each genre in book.genres 
+      li #{genre}
+      br
 
   //A horizontal ruler
   hr
